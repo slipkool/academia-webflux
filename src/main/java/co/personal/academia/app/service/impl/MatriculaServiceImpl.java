@@ -1,12 +1,14 @@
 package co.personal.academia.app.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import co.personal.academia.app.model.Matricula;
 import co.personal.academia.app.repo.IGenericRepo;
 import co.personal.academia.app.repo.IMatriculaRepo;
 import co.personal.academia.app.service.IMatriculaService;
 
+@Service
 public class MatriculaServiceImpl extends CRUDImpl<Matricula, String> implements IMatriculaService {
 
     @Autowired

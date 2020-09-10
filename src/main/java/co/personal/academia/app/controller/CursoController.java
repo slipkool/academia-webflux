@@ -1,5 +1,8 @@
 package co.personal.academia.app.controller;
 
+import java.net.URI;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -13,12 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.personal.academia.app.model.Curso;
+import co.personal.academia.app.service.ICursoService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/cursos")
 public class CursoController {
+
+    @Autowired
+    private ICursoService service;
 
     @GetMapping
     public Mono<ResponseEntity<Flux<Curso>>> listar() {
@@ -36,8 +43,11 @@ public class CursoController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<Curso>> registrar(@RequestBody Curso estudiando, final ServerHttpRequest request) {
-        return Mono.empty();
+    public Mono<ResponseEntity<Curso>> registrar(@RequestBody Curso curso, final ServerHttpRequest request) {
+        return service.registrar(curso)
+                .map(c -> ResponseEntity.created(URI.create(request.getURI().toString().concat(c.getId())))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(c));
     }
 
     @PutMapping

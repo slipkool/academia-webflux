@@ -1,12 +1,14 @@
 package co.personal.academia.app.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import co.personal.academia.app.model.Curso;
 import co.personal.academia.app.repo.ICursoRepo;
 import co.personal.academia.app.repo.IGenericRepo;
 import co.personal.academia.app.service.ICursoService;
 
+@Service
 public class CursoServiceImpl extends CRUDImpl<Curso, String> implements ICursoService {
 
     @Autowired

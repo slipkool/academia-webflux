@@ -1,6 +1,7 @@
 package co.personal.academia.app.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import co.personal.academia.app.model.Estudiante;
 import co.personal.academia.app.repo.IEstudianteRepo;
@@ -8,6 +9,7 @@ import co.personal.academia.app.repo.IGenericRepo;
 import co.personal.academia.app.service.IEstudianteService;
 import reactor.core.publisher.Flux;
 
+@Service
 public class EstudianteServiceImpl extends CRUDImpl<Estudiante, String> implements IEstudianteService {
 
     @Autowired
