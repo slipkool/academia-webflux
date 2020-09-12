@@ -2,6 +2,8 @@ package co.personal.academia.app.controller;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,7 +51,7 @@ public class CursoController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<Curso>> registrar(@RequestBody Curso curso, final ServerHttpRequest request) {
+    public Mono<ResponseEntity<Curso>> registrar(@Valid @RequestBody Curso curso, final ServerHttpRequest request) {
         return service.registrar(curso)
                 .map(c -> ResponseEntity.created(URI.create(request.getURI().toString().concat(c.getId())))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +59,7 @@ public class CursoController {
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Curso>> actualizar(@PathVariable String id, @RequestBody Curso curso) {
+    public Mono<ResponseEntity<Curso>> actualizar(@PathVariable String id, @Valid @RequestBody Curso curso) {
         Mono<Curso> cursoBd = service.listarPorId(id);
         Mono<Curso> cursoParam = Mono.just(curso);
 

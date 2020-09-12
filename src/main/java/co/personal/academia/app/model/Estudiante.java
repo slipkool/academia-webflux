@@ -1,6 +1,7 @@
 package co.personal.academia.app.model;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,12 +11,19 @@ public class Estudiante {
 
     @Id
     private String id;
-    @NotEmpty
+
+    @NotNull
+    @Size(min=2, max=30)
     private String nombres;
-    @NotEmpty
+
+    @NotNull
+    @Size(min=2, max=30)
     private String apellidos;
-    @NotEmpty
+
+    @NotNull
+    @Size(min=2, max=30)
     private String dni;
+
     private int edad;
 
     public String getId() {

@@ -3,6 +3,8 @@ package co.personal.academia.app.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,10 +14,16 @@ public class Matricula {
 
     @Id
     private String id;
+
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime fechaMatricula;
+
+    @NotEmpty
     private Estudiante estudiante;
+
+    @NotEmpty
     private List<MatriculaCurso> cursos;
+
     private boolean estado;
 
     public String getId() {

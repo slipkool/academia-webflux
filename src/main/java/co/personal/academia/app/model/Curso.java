@@ -1,6 +1,7 @@
 package co.personal.academia.app.model;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,9 +11,15 @@ public class Curso {
 
     @Id
     private String id;
-    @NotEmpty
+
+    @NotNull
+    @Size(min=2, max=30)
     private String nombre;
+
+    @NotNull
+    @Size(min=2, max=5)
     private String siglas;
+
     private boolean estado;
 
     public String getId() {
