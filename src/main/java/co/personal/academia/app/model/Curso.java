@@ -12,12 +12,12 @@ public class Curso {
     @Id
     private String id;
 
-    @NotNull
-    @Size(min=2, max=30)
+    @NotNull(message = "El nombre debe estar presente")
+    @Size(min=2, max=30, message = "El nombre del curso '${validatedValue}' debe estar entre {min} y {max} numero de caracteres")
     private String nombre;
 
-    @NotNull
-    @Size(min=2, max=5)
+    @NotNull(message = "La sigla debe estar presente")
+    @Size(min=2, max=5, message = "La sigla '${validatedValue}' debe estar entre {min} y {max} numero de caracteres")
     private String siglas;
 
     private boolean estado;

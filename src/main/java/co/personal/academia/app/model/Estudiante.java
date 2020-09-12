@@ -12,16 +12,16 @@ public class Estudiante {
     @Id
     private String id;
 
-    @NotNull
-    @Size(min=2, max=30)
+    @NotNull(message = "El nombre debe estar presente")
+    @Size(min=2, max=30, message = "El nombre del estudiante '${validatedValue}' debe estar entre {min} y {max} numero de caracteres")
     private String nombres;
 
-    @NotNull
-    @Size(min=2, max=30)
+    @NotNull(message = "El apellido debe estar presente")
+    @Size(min=2, max=30, message = "El apellido del estudiante '${validatedValue}' debe estar entre {min} y {max} numero de caracteres")
     private String apellidos;
 
-    @NotNull
-    @Size(min=2, max=30)
+    @NotNull(message = "El DNI debe estar presente")
+    @Size(min=2, max=30, message = "El DNI del estudiante '${validatedValue}' debe estar entre {min} y {max} numero de caracteres")
     private String dni;
 
     private int edad;

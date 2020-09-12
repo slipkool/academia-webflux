@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
@@ -37,8 +38,9 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
     }
 
     private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
-        Map<String, Object> errorPropertiesMap = getErrorAttributes(request, false);
+        Map<String, Object> errorPropertiesMap = getErrorAttributes(request, ErrorAttributeOptions.defaults());
         final Map<String, Object> mapException = new HashMap<>();
+        Throwable ex = getError(request);
 
         var httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         String statusCode = String.valueOf(errorPropertiesMap.get("status"));
@@ -46,17 +48,17 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         switch (statusCode) {
         case "500":
             mapException.put("error", "500");
-            mapException.put("excepcion", "Error Interno");
+            mapException.put("excepcion", "Error Interno: ".concat(ex.getMessage()));
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             break;
         case "400":
             mapException.put("error", "400");
-            mapException.put("excepcion", "Petición incorrecta");
+            mapException.put("excepcion", "Petición incorrecta: ".concat(ex.getMessage()));
             httpStatus = HttpStatus.BAD_REQUEST;
             break;
         default:
             mapException.put("error", "XYZ");
-            mapException.put("excepcion", "Otro error");
+            mapException.put("excepcion", "Otro error:".concat(ex.getMessage()));
             httpStatus = HttpStatus.CONFLICT;
             break;
         }

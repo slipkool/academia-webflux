@@ -18,10 +18,10 @@ public class Matricula {
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime fechaMatricula;
 
-    @NotEmpty
+    @NotEmpty(message = "La lista de estudiantes no debe estar vacia")
     private Estudiante estudiante;
 
-    @NotEmpty
+    @NotEmpty(message = "La lista de cursos no debe estar vacia")
     private List<MatriculaCurso> cursos;
 
     private boolean estado;

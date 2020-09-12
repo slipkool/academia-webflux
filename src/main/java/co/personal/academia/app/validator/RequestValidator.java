@@ -29,8 +29,12 @@ public class RequestValidator {
         if(violations == null || violations.isEmpty()) {
             return Mono.just(obj);
         }
+        StringBuilder message = new StringBuilder();
+        for (ConstraintViolation<?> violation : violations) {
+            message.append(violation.getMessage().concat(";"));
+        }
 
       //Esto evita devolver siempre un error 500, sino que devolvemos adecuadamente 400 :)
-        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, message.toString()));
     }
 }
