@@ -3,6 +3,7 @@ package co.personal.academia.app.controller;
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -29,7 +30,7 @@ public class CursoController {
 
     @GetMapping
     public Mono<ResponseEntity<Flux<Curso>>> listar() {
-        Flux<Curso> fxcursos = Flux.empty();
+        Flux<Curso> fxcursos = service.listar();
 
         return Mono.just(ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_JSON)
@@ -39,7 +40,12 @@ public class CursoController {
 
     @GetMapping("/{id}")
     public Mono<ResponseEntity<Curso>> listarPorId(@PathVariable("id") String id) {
-        return Mono.empty();
+        return service.listarPorId(id)
+                .map(cur -> ResponseEntity.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(cur)
+                )
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -50,13 +56,32 @@ public class CursoController {
                         .body(c));
     }
 
-    @PutMapping
-    public Mono<ResponseEntity<Curso>> actualizar(@RequestBody Curso estudiando) {
-        return Mono.empty();
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<Curso>> actualizar(@PathVariable String id, @RequestBody Curso curso) {
+        Mono<Curso> cursoBd = service.listarPorId(id);
+        Mono<Curso> cursoParam = Mono.just(curso);
+
+        return cursoBd.zipWith(cursoParam, (bd, cur) -> {
+            bd.setNombre(cur.getNombre());
+            bd.setSiglas(cur.getSiglas());
+            bd.setEstado(cur.isEstado());
+            return bd;
+        })
+        .flatMap(service::modificar)
+        .map(est -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(est)
+        )
+        .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> eliminar(@PathVariable("id") String id) {
-        return Mono.empty();
+        return service.listarPorId(id)
+                .flatMap(p -> {
+                    return service.eliminar(p.getId())
+                            .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
+                })
+                .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
     }
 }

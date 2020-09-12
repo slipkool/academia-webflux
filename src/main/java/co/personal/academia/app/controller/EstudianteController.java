@@ -3,6 +3,7 @@ package co.personal.academia.app.controller;
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -29,7 +30,7 @@ public class EstudianteController {
 
     @GetMapping
     public Mono<ResponseEntity<Flux<Estudiante>>> listar() {
-        Flux<Estudiante> fxEstudiantes = Flux.empty();
+        Flux<Estudiante> fxEstudiantes = service.listar();
 
         return Mono.just(ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_JSON)
@@ -39,7 +40,7 @@ public class EstudianteController {
 
     @GetMapping("/ordenado")
     public Mono<ResponseEntity<Flux<Estudiante>>> listarOrdenado() {
-        Flux<Estudiante> fxEstudiantes = Flux.empty();
+        Flux<Estudiante> fxEstudiantes = service.listarOrdenado();
 
         return Mono.just(ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_JSON)
@@ -49,7 +50,12 @@ public class EstudianteController {
 
     @GetMapping("/{id}")
     public Mono<ResponseEntity<Estudiante>> listarPorId(@PathVariable("id") String id) {
-        return Mono.empty();
+        return service.listarPorId(id)
+                .map(est -> ResponseEntity.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(est)
+                )
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -60,13 +66,33 @@ public class EstudianteController {
                         .body(e));
     }
 
-    @PutMapping
-    public Mono<ResponseEntity<Estudiante>> actualizar(@RequestBody Estudiante estudiando) {
-        return Mono.empty();
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<Estudiante>> actualizar(@PathVariable String id, @RequestBody Estudiante estudiante) {
+        Mono<Estudiante> estudianteBd = service.listarPorId(id);
+        Mono<Estudiante> estudianteParam = Mono.just(estudiante);
+
+        return estudianteBd.zipWith(estudianteParam, (bd, est) -> {
+            bd.setNombres(est.getNombres());
+            bd.setApellidos(est.getApellidos());
+            bd.setDni(est.getDni());
+            bd.setEdad(est.getEdad());
+            return bd;
+        })
+        .flatMap(service::modificar)
+        .map(est -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(est)
+        )
+        .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> eliminar(@PathVariable("id") String id) {
-        return Mono.empty();
+        return service.listarPorId(id)
+                .flatMap(p -> {
+                    return service.eliminar(p.getId())
+                            .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
+                })
+                .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
     }
 }
