@@ -1,9 +1,10 @@
 package co.personal.academia.app.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,10 +16,10 @@ public class Matricula {
     @Id
     private String id;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime fechaMatricula;
+    @DateTimeFormat(pattern="dd/MM/yyyy")
+    private LocalDate fechaMatricula;
 
-    @NotEmpty(message = "La lista de estudiantes no debe estar vacia")
+    @NotNull(message = "La lista de estudiantes no debe estar vacia")
     private Estudiante estudiante;
 
     @NotEmpty(message = "La lista de cursos no debe estar vacia")
@@ -34,11 +35,11 @@ public class Matricula {
         this.id = id;
     }
 
-    public LocalDateTime getFechaMatricula() {
+    public LocalDate getFechaMatricula() {
         return fechaMatricula;
     }
 
-    public void setFechaMatricula(LocalDateTime fechaMatricula) {
+    public void setFechaMatricula(LocalDate fechaMatricula) {
         this.fechaMatricula = fechaMatricula;
     }
 
